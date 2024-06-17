@@ -1,3 +1,8 @@
+// inputMode = 1  > 추가
+// inputMode = 2  > 수정
+let inputMode = 1;
+
+
 let userList = [];
 loadUserList()
 
@@ -17,6 +22,7 @@ function renderTable() {
     userTableBody.innerHTML = userList.map(({id, name, username, password}, index) => {
         return `
             <tr>
+                <th><input type="checkbox" onchange="handleUserCheck(event)"></th>
                 <td>${index + 1}</td>
                 <td>${id}</td>
                 <td>${name}</td>
@@ -96,4 +102,18 @@ function getNewId() {
 
    return maxUserId + 1; 
 }
+
+function handleUserCheck(e) {   
+    const checkBoxList = document.querySelectorAll('input[type="checkbox"]');
+    for(let i = 0; i < checkBoxList.length; i++){
+        const checkbox = checkBoxList[i];
+        if(e.target === checkbox){
+            continue;
+        }
+        checkbox.checked = false;
+    }
+}
+
+
+
 
