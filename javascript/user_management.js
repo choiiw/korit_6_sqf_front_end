@@ -85,26 +85,26 @@ function handleUserInputKeyDown(e) {
 }
 
 function loadUserList() {
-    const lsUserList = localStorage.getItem("userList");
+    const lsUserList = localStorage.getItem("userList");                                 //local에 데이터 저장
     userList = !lsUserList ? [] : JSON.parse(lsUserList);
     renderTable();
 }
 
 function deleteUser(e) {
-    userList = userList.filter(({id}) => id !== parseInt(e.target.value));
+    userList = userList.filter(({id}) => id !== parseInt(e.target.value));                 // 삭제 
     saveUserList();
     renderTable();
 }
 
 function getNewId() {
-   const userIds = userList.map(user => user.id);
+   const userIds = userList.map(user => user.id);                                          // 아이디값 부여
    const maxUserId = userIds.length === 0 ? 20240000 : Math.max.apply(null, userIds);
 
    return maxUserId + 1; 
 }
 
 function handleUserCheck(e) {   
-    const checkBoxList = document.querySelectorAll('input[type="checkbox"]');
+    const checkBoxList = document.querySelectorAll('input[type="checkbox"]');                 // 체크박스 중복 제거 
     for(let i = 0; i < checkBoxList.length; i++){
         const checkbox = checkBoxList[i];
         if(e.target === checkbox){
@@ -113,7 +113,4 @@ function handleUserCheck(e) {
         checkbox.checked = false;
     }
 }
-
-
-
-
+//  해당 인덱스 체크를 바탕으로 id 값 비교 -> id 값이 일치 하면 해당 인덱스의 내용 수정 (입력 방식은 등록할 때 같이)
