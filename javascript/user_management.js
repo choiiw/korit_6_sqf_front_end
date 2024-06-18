@@ -4,7 +4,7 @@ let inputMode = 1;
 
 
 let userList = [];
-loadUserList()
+loadUserList();
 
 let emptyUser = {
     id: 0,
@@ -22,7 +22,7 @@ function renderTable() {
     userTableBody.innerHTML = userList.map(({id, name, username, password}, index) => {
         return `
             <tr>
-                <th><input type="checkbox" onchange="handleUserCheck(event)"></th>
+                <th><input type="checkbox" onchange="handleUserCheck(event)" value="${id}"></th>
                 <td>${index + 1}</td>
                 <td>${id}</td>
                 <td>${name}</td>
@@ -41,18 +41,13 @@ function handleUserInputKeyDown(e) {
         ...user,
         [e.target.name]: e.target.value
     }
-    
-
-
-    console.log(user);
 
     if(e.keyCode === 13) {
     
         const nameInput = document.querySelector(".name-input");    
         const passwordInput = document.querySelector(".password-input");
         const usernameInput = document.querySelector(".username-input");
-
-        
+       
         if(e.target.name === "name") {
             usernameInput.focus();
         }
@@ -63,20 +58,32 @@ function handleUserInputKeyDown(e) {
         }
         
         if(e.target.name === "password") {
-            userList = [ ...userList, { ...user, id: getNewId() } ];
+            if(inputMode === 1){
+                userList = [ ...userList, { ...user, id: getNewId() } ];
+            }
+
+            if(inputMode === 2) {
+                let findIndex = -1;
+                for(let i = 0; i < userList.length; i++) {
+                    if (userList[i].id === user.id) {
+                        findIndex = i;
+                        break;
+                    }
+                }
+                if(findIndex === -1) {
+                    alert("사용자 정보 수정 중 오류 발생. 관리자에게 문의하세요.");
+                    return;
+                }
+
+                userList[findIndex] = user;
+            } 
             
             saveUserList();
             renderTable();
-
-            nameInput.value = emptyUser.name;
-            usernameInput.value = emptyUser.username;
-            passwordInput.value = emptyUser.password;
+            clearInputValue();
             
             nameInput.focus();
-            
         }
-        
-
     }
 }
     
@@ -99,19 +106,54 @@ function deleteUser(e) {
 function getNewId() {
    const userIds = userList.map(user => user.id);                                          // 아이디값 부여
    const maxUserId = userIds.length === 0 ? 20240000 : Math.max.apply(null, userIds);
-
    return maxUserId + 1; 
 }
 
 function handleUserCheck(e) {   
     const checkBoxList = document.querySelectorAll('input[type="checkbox"]');                 // 체크박스 중복 제거 
-    for(let i = 0; i < checkBoxList.length; i++){
-        const checkbox = checkBoxList[i];
-        if(e.target === checkbox){
+    for(let checkbox of checkBoxList){
+       if(checkbox === e.target){
             continue;
         }
         checkbox.checked = false;
     }
+
+    if(e.target.checked) {
+        inputMode = 2;
+        const [ findUser ] = userList.filter(user => user.id === parseInt(e.target.value));
+        setInputValue(findUser);
+        user = {
+            ...findUser
+        }
+        return;
+    }
+    clearInputValue();
 }
-//  해당 인덱스 체크를 바탕으로 id 값 비교 -> id 값이 일치 하면 해당 인덱스의 내용 수정 (입력 방식은 등록할 때 같이)
-//ddd
+
+function setInputValue(user) {
+    const nameInput = document.querySelector(".name-input");
+    const usernameInput = document.querySelector(".username-input");
+    const passwordInput = document.querySelector(".password-input");
+
+    nameInput.value = user.name;
+    usernameInput.value = user.username;
+    passwordInput.value = user.password;
+}
+
+function clearInputValue() {
+    const nameInput = document.querySelector(".name-input");
+    const usernameInput = document.querySelector(".username-input");
+    const passwordInput = document.querySelector(".password-input");
+    
+    inputMode = 1;
+            
+    user = {
+        ...emptyUser
+    }
+    // 수정 후 모드 바꿔줘야함.
+    nameInput.value = emptyUser.name;
+    usernameInput.value = emptyUser.username;
+    passwordInput.value = emptyUser.password;
+    
+ 
+}

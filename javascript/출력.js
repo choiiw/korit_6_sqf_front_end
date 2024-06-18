@@ -43,7 +43,7 @@ console.log(!!a);
 var b = null;
 console.log(!!b);
 
-var c = 0 / 0 ;    // NAN  => 계산 할 수 없다. => false
+var c = 0 / 0 ;    // NAN  => 계산 할 수 없다. => false  yy
 console.log(c);
 
 if(!num) {
